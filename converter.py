@@ -2,7 +2,7 @@
 import sys
 import re
 import os.path
-import commands
+import subprocess
 
 argv = sys.argv
 argc = len(argv)
@@ -13,7 +13,7 @@ if(argc != 3):
 symDict = {}
 def getSymbolAddr(filepath, funcname):
   if not symDict.has_key(filepath):
-    status, output = commands.getstatusoutput('nm -p %s' % filepath)
+    status, output = subprocess.getstatusoutput('nm -p %s' % filepath)
     if status != 0:
       symDict[filepath] = ('!! %s\n' % output)
       return False, ('!! %s\n' % output)
@@ -67,10 +67,9 @@ with open(argv[1], 'r') as fin:
         addrfinal = int(offset, 16)
       else:
         addrfinal = int(address, 16)
-      status, output = commands.getstatusoutput('addr2line -e %s %x' % (filepath, addrfinal))
+      status, output = subprocess.getstatusoutput('addr2line -e %s %x' % (filepath, addrfinal))
       if status != 0:
         fout.write('!! %s\n' % output)
       else:
         fout.write('%s\n' % output)
-
 
